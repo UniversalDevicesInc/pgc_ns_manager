@@ -2,7 +2,7 @@
   "author": "James Milne (milne.james@gmail.com)",
   "license": "MIT",
   "name": "pgc_ns_manager",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Polyglot v2 Swarm NodeServer Manager",
   "main": "ns_manager.js",
   "scripts": {},

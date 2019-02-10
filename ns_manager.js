@@ -696,7 +696,7 @@ async function startHealthCheck() {
         response.write(data)
         response.end()
     }
-  }).listen(3001)
+  }).listen(3000)
 }
 
 async function main() {
