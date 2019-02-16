@@ -259,9 +259,9 @@ async function resultBatchaddnode(cmd, fullMsg) {
     for (let result of results) {
       if (result.success || result.statusCode === 400) {
         if (result.statusCode === 400) {
-          LOGGER.debug(`addNode: Node already existed in ISY. Updating database. ${fullMsg.id}(${fullMsg.profileNum}) - ${result.name}`, fullMsg.userId)
+          LOGGER.debug(`resultBatchaddnode: Node already existed in ISY. Updating database. ${fullMsg.id}(${fullMsg.profileNum}) - ${result.name}`, fullMsg.userId)
         } else {
-          LOGGER.debug(`addNode: Added Node ${fullMsg.id}(${fullMsg.profileNum}) - ${result.name}`, fullMsg.userId)
+          LOGGER.debug(`resultBatchaddnode: Added Node ${fullMsg.id}(${fullMsg.profileNum}) - ${result.name}`, fullMsg.userId)
         }
         let node = result
         node.isPrimary = node.address === node.primary ? true : false
@@ -297,7 +297,8 @@ async function resultBatchaddnode(cmd, fullMsg) {
       }
     }
   } catch (err) {
-    LOGGER.error(`status: ${err.stack} JSON: ${JSON.stringify(fullMsg)}`, fullMsg.userId)
+    LOGGER.error(`resultBatchaddnode: updateExpression: ${updateExpression} :: expressionAttributeNames: ${JSON.stringify(expressionAttributeNames)} :: expressionValues: ${JSON.stringify(expressionValues)}`)
+    LOGGER.error(`resultBatchaddnode: ${err.stack} JSON: ${JSON.stringify(fullMsg)}`, fullMsg.userId)
   }
 }
 
@@ -340,11 +341,12 @@ async function resultBatchstatus(cmd, fullMsg) {
       let data = await docClient.update(params).promise()
       if (data.hasOwnProperty('Attributes')) {
         update = data.Attributes
-        LOGGER.debug(`status: ${update.name}(${update.profileNum}) :: batch update`, fullMsg.userId)
+        LOGGER.debug(`resultBatchstatus: ${update.name}(${update.profileNum}) :: batch update`, fullMsg.userId)
         return update
       }
     } catch (err) {
-      LOGGER.error(`status: ${err} JSON: ${JSON.stringify(fullMsg)}`, fullMsg.userId)
+      LOGGER.error(`resultBatchstatus: updateExpression: ${updateExpression} :: expressionAttributeNames: ${JSON.stringify(expressionAttributeNames)} :: expressionValues: ${JSON.stringify(expressionValues)}`)
+      LOGGER.error(`resultBatchstatus: ${err} JSON: ${JSON.stringify(fullMsg)}`, fullMsg.userId)
     }
   }
 }
