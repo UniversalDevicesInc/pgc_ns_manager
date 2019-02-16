@@ -318,12 +318,12 @@ async function resultBatchstatus(cmd, fullMsg) {
     if (updatingDrivers.includes(`${node.address}:${node.driver}`)) { continue }
     updatingDrivers.push(`${node.address}:${node.driver}`)
     if (!updateExpression) {
-      updateExpression = `SET nodes.#${node.address}.drivers.${node.driver}.#value = :${node.driver}`
+      updateExpression = `SET nodes.#${node.address}.drivers.${node.driver}.#value = :${node.address + node.driver}`
     } else {
-      updateExpression += `, nodes.#${node.address}.drivers.${node.driver}.#value = :${node.driver}`
+      updateExpression += `, nodes.#${node.address}.drivers.${node.driver}.#value = :${node.address + node.driver}`
     }
     expressionAttributeNames[`#${node.address}`] = `${node.address}`
-    expressionValues[`:${node.driver}`] = node.value
+    expressionValues[`:${node.address + node.driver}`] = node.value
   }
   if (updateExpression) {
     let params = {
