@@ -297,7 +297,7 @@ async function resultBatchaddnode(cmd, fullMsg) {
       }
     }
   } catch (err) {
-    LOGGER.error(`resultBatchaddnode: updateExpression: ${updateExpression} :: expressionAttributeNames: ${JSON.stringify(expressionAttributeNames)} :: expressionValues: ${JSON.stringify(expressionValues)}`)
+    LOGGER.error(`resultBatchaddnode: updateExpression: ${updateExpression} :: expressionAttributeNames: ${JSON.stringify(expressionAttributeNames)} :: expressionValues: ${JSON.stringify(expressionValues)}`, fullMsg.userId)
     LOGGER.error(`resultBatchaddnode: ${err.stack} JSON: ${JSON.stringify(fullMsg)}`, fullMsg.userId)
   }
 }
@@ -345,7 +345,7 @@ async function resultBatchstatus(cmd, fullMsg) {
         return update
       }
     } catch (err) {
-      LOGGER.error(`resultBatchstatus: updateExpression: ${updateExpression} :: expressionAttributeNames: ${JSON.stringify(expressionAttributeNames)} :: expressionValues: ${JSON.stringify(expressionValues)}`)
+      LOGGER.error(`resultBatchstatus: updateExpression: ${updateExpression} :: expressionAttributeNames: ${JSON.stringify(expressionAttributeNames)} :: expressionValues: ${JSON.stringify(expressionValues)}`, fullMsg.userId)
       LOGGER.error(`resultBatchstatus: ${err} JSON: ${JSON.stringify(fullMsg)}`, fullMsg.userId)
     }
   }
