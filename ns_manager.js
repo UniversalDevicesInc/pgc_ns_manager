@@ -253,6 +253,7 @@ async function resultBatch(cmd, fullMsg) {
 async function resultBatchaddnode(cmd, fullMsg) {
   try {
     let updateExpression, update
+    let expressionAttributeNames = {}
     let expressionValues = {}
     let results = fullMsg.result.batch[cmd]
     for (let result of results) {
@@ -267,11 +268,12 @@ async function resultBatchaddnode(cmd, fullMsg) {
         node.timeAdded = +Date.now()
         node.timeStarted = 0
         if (!updateExpression) {
-          updateExpression = `SET nodes.${node.address} = :${node.address}`
+          updateExpression = `SET nodes.#${node.address} = :${node.address}`
         } else {
-          updateExpression += `, nodes.${node.address} = :${node.address}`
+          updateExpression += `, nodes.#${node.address} = :${node.address}`
         }
         expressionValues[`:${node.address}`] = node
+        expressionAttributeNames[`#${node.address}`] = `${node.address}`
       }
     }
     if (updateExpression) {
@@ -283,6 +285,7 @@ async function resultBatchaddnode(cmd, fullMsg) {
         },
         UpdateExpression: updateExpression,
         ExpressionAttributeValues: expressionValues,
+        ExpressionAttributeNames: expressionAttributeNames,
         ReturnValues: 'ALL_NEW'
       }
       let data = await docClient.update(params).promise()
@@ -302,6 +305,9 @@ async function resultBatchremovenode(cmd, fullMsg) {}
 
 async function resultBatchstatus(cmd, fullMsg) {
   let updateExpression, update
+  let expressionAttributeNames = {
+    "#value": 'value'
+  }
   let expressionValues = {}
   let results = fullMsg.result.batch[cmd]
   let updatingDrivers = []
@@ -311,10 +317,11 @@ async function resultBatchstatus(cmd, fullMsg) {
     if (updatingDrivers.includes(`${node.address}:${node.driver}`)) { continue }
     updatingDrivers.push(`${node.address}:${node.driver}`)
     if (!updateExpression) {
-      updateExpression = `SET nodes.${node.address}.drivers.${node.driver}.#value = :${node.driver}`
+      updateExpression = `SET nodes.#${node.address}.drivers.${node.driver}.#value = :${node.driver}`
     } else {
-      updateExpression += `, nodes.${node.address}.drivers.${node.driver}.#value = :${node.driver}`
+      updateExpression += `, nodes.#${node.address}.drivers.${node.driver}.#value = :${node.driver}`
     }
+    expressionAttributeNames[`#${node.address}`] = `${node.address}`
     expressionValues[`:${node.driver}`] = node.value
   }
   if (updateExpression) {
@@ -325,9 +332,7 @@ async function resultBatchstatus(cmd, fullMsg) {
         "profileNum": fullMsg.profileNum
       },
       UpdateExpression: updateExpression,
-      ExpressionAttributeNames: {
-        "#value": 'value'
-      },
+      ExpressionAttributeNames: expressionAttributeNames,
       ExpressionAttributeValues: expressionValues,
       ReturnValues: 'ALL_NEW'
     }
@@ -365,12 +370,13 @@ async function connected(cmd, fullMsg) {
       "id": fullMsg.id,
       "profileNum": fullMsg.profileNum
     },
-    UpdateExpression: `set #connected = :connected, timeStarted = :timeStarted, firstRun = :firstRun`,
+    UpdateExpression: `set #connected = :connected, timeStarted = :timeStarted, firstRun = :firstRun, lastDisconnect = :lastDisconnect`,
     ExpressionAttributeNames: { "#connected": 'connected' },
     ExpressionAttributeValues: {
       ":connected": fullMsg.connected,
       ":timeStarted": fullMsg.connected ? +Date.now() : 0,
-      ":firstRun": false
+      ":firstRun": false,
+      ":lastDisconnect": fullMsg.connected ? 0 : +Date.now()
     },
     ConditionExpression: 'attribute_exists(id)',
     ReturnValues: 'ALL_NEW'
