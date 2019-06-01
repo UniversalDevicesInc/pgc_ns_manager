@@ -6,13 +6,6 @@ const VERSION = PACKAGE.version
 const STAGE = process.env.STAGE || 'test'
 const LOCAL = process.env.LOCAL || false
 const DYNAMO_NS = `pg_${STAGE}-nsTable`
-const SECRETS = require('./secrets')
-const AWS_ACCESS_KEY_ID = SECRETS.get('SWARM_AWS_ACCESS_KEY_ID')
-const AWS_SECRET_ACCESS_KEY = SECRETS.get('SWARM_AWS_SECRET_ACCESS_KEY')
-if (AWS_ACCESS_KEY_ID && AWS_SECRET_ACCESS_KEY) {
-  process.env['AWS_ACCESS_KEY_ID'] = AWS_ACCESS_KEY_ID
-  process.env['AWS_SECRET_ACCESS_KEY'] = AWS_SECRET_ACCESS_KEY
-}
 
 const AWS = require('aws-sdk')
 AWS.config.update({region:'us-east-1', correctClockSkew: true})
