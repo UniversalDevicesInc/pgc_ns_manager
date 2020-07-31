@@ -423,14 +423,14 @@ async function updateDatabase(cmd, fullMsg) {
   try {
     let data = await docClient.update(params).promise()
     if (data.hasOwnProperty('Attributes')) {
-      update = data.Attributes
+      let update = data.Attributes
       LOGGER.debug(`${cmd} updated for (${update.profileNum}) ${update.name}`, fullMsg.userId)
       mqttSend(`${STAGE}/ns/${update.worker}`, { config: update })
       mqttSend(`${STAGE}/frontend/${fullMsg.userId}`, { id: fullMsg.id, nsUpdate: {[fullMsg.profileNum]: update}} )
     }
   } catch (err) {
     LOGGER.error(`${err.stack}`)
-    if (!err.code === "ConditionalCheckFailedException") {
+    if (err.code !== "ConditionalCheckFailedException") {
       LOGGER.error(`${cmd}: ${err}`, fullMsg.userId)
     }
   }

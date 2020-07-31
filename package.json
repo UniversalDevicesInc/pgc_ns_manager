@@ -9,7 +9,8 @@
     "dockerbuild": "docker build --rm -t einstein42/$npm_package_name:version-$npm_package_version .",
     "dockerpush": "docker login && docker push einstein42/$npm_package_name:version-$npm_package_version",
     "patchandrelease": "npm version patch --force",
-    "postversion": "git push && git push --tags"
+    "postversion": "git push && git push --tags",
+    "test-unit": "NODE_ENV=test mocha '**/*.spec.js'"
   },
   "repository": {
     "type": "git",
@@ -17,5 +18,11 @@
   },
   "dependencies": {
     "aws-sdk": "^2.387.0"
+  },
+  "devDependencies": {
+    "aws-sdk-mock": "4.4.0",
+    "chai": "4.2.0",
+    "mocha": "6.1.4",
+    "sinon": "7.3.2"
   }
 }
